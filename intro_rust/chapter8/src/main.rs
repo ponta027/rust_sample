@@ -1,5 +1,6 @@
 mod method;
 mod result;
+mod result2;
 mod sample;
 use sample::sample_lib;
 
@@ -139,6 +140,7 @@ fn main() {
     method::do_sample();
     /* */
     result::do_result();
+    result2::sample();
     /* */
     sample::example();
     sample_lib::hoge();

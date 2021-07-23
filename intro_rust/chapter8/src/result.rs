@@ -38,8 +38,6 @@ pub fn do_result(){
 
     println!("[END]Result");
 }
-
-
 use std::num::ParseIntError;
 // Result Type alias
 type Result<T> = std::result::Result<T , ParseIntError>;
@@ -104,4 +102,3 @@ fn sample_8_3_6(){
 }
 
 
-//pub mod sample_lib;
