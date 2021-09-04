@@ -1,3 +1,14 @@
-# upd 
+# UDP sample
 
-> nc -u 127.0.0.1  34254
+## start udp server
+
+> cargo run 
+
+## start udp client 
+
+> cargo run --client
+> test
+
+
+--
+ 
