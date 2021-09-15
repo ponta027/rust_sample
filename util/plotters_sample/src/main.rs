@@ -48,15 +48,22 @@ fn sample_plot2(name: String) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 /** */
-struct GraphInfo {
+struct GraphInfo<'a> {
     width: u32,
     height: u32,
     name: String,
     caption: String,
+    points: &'a Vec<GraphData<'a>>,
+}
+
+struct GraphData<'a> {
+    name: String,
+    points: &'a Vec<(f32, f32)>,
 }
 
 /** */
-fn plot_data(graph: &GraphInfo, data: Vec<(f32, f32)>) -> Result<(), Box<dyn std::error::Error>> {
+fn plot_data(graph: &GraphInfo) -> Result<(), Box<dyn std::error::Error>> {
+    //fn plot_data(graph: &GraphInfo, data: Vec<(f32, f32)>) -> Result<(), Box<dyn std::error::Error>> {
     let root = BitMapBackend::new(&graph.name, (graph.width, graph.height)).into_drawing_area();
     root.fill(&WHITE)?;
 
@@ -67,11 +74,17 @@ fn plot_data(graph: &GraphInfo, data: Vec<(f32, f32)>) -> Result<(), Box<dyn std
         .build_cartesian_2d(-0f32..2f32, -0.0f32..2f32)?;
 
     chart.configure_mesh().draw()?;
-
-    chart
-        .draw_series(LineSeries::new(data.into_iter(), &BLUE))?
-        .label("y = x")
-        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
+    for it in graph.points {
+        let mut data: Vec<(f32, f32)> = Vec::new();
+        for it2 in it.points {
+            data.push(*it2);
+        }
+        chart
+            .draw_series(LineSeries::new(data.into_iter(), &BLUE))?
+            .label("y = x")
+            .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
+    }
+    //    for it in graph.points[0].points {}
 
     chart
         .configure_series_labels()
@@ -87,14 +100,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .map(|x| x as f32)
         .map(|x| (x / 10., x.sin()))
         .collect();
+    let points2: Vec<(f32, f32)> = (-10..=10)
+        .map(|x| x as f32)
+        .map(|x| (x / 10., x/10.))
+        .collect();
+
+
+    let data = GraphData {
+        name: "sample".to_string(),
+        points: &points_sine,
+    };
+    let data2 = GraphData {
+        name: "sample2".to_string(),
+        points: &points2,
+    };
+
 
     let graph1 = GraphInfo {
         width: 640,
         height: 480,
         name: "sine_curve.png".to_string(),
         caption: "sine curve".to_string(),
+        points: &vec![data,data2],
     };
-    plot_data(&graph1, points_sine).unwrap();
+
+    plot_data(&graph1).unwrap();
 
     sample_plot2("sample_plot2.png".to_string()).unwrap();
     Ok(())
