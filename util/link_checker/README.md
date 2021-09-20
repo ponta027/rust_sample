@@ -1,6 +1,11 @@
 # link checker
 
-T.B.D
+## ページ内リンクチェックツール
+
+
+> cargo run -d [directory]
+> cargo run -f [file]
+
 
 
 

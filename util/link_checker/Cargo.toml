@@ -9,3 +9,4 @@ edition = "2018"
 
 html5ever = "0.25"
 markup5ever = "*"
+structopt = "0.3.21"

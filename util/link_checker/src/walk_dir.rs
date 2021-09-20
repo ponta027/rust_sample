@@ -15,19 +15,3 @@ pub fn read_dir(path: &Path) -> io::Result<Vec<String>> {
         })
         .collect())
 }
-
-/*
-fn walk_dir(path: &Path) -> () {
-    println!("{:?}", path.display());
-    for entry in fs::read_dir(path).unwrap() {
-        let entry = entry.unwrap();
-        let path = entry.path();
-        if path.is_dir() {
-            walk_dir(&path);
-        } else {
-            println!("{:?}", path.display());
-        }
-    }
-    ()
-}
-*/
