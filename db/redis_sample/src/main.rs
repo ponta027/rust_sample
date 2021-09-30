@@ -2,6 +2,9 @@ extern crate redis;
 
 use redis::Commands;
 use redis::FromRedisValue;
+use redis::RedisResult;
+use redis::{RedisWrite, ToRedisArgs};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::env;
 
@@ -55,6 +58,49 @@ fn del_data(key: &str, con: &mut redis::Connection) {
     redis::cmd("DEL").arg(key).execute(con);
 }
 
+#[derive(Serialize, Deserialize)]
+struct Person {
+    id: u32,
+    name: String,
+}
+
+impl FromRedisValue for Person {
+    //
+    fn from_redis_value(data: &redis::Value) -> RedisResult<Self> {
+        // T.B.D
+        println!("from_redis_value:{:?}", data);
+        let result = Person {
+            id: 20,
+            name: "TEST".to_string(),
+        };
+        println!("from_redis_value:{:?}", data);
+        Ok(result)
+    }
+}
+impl ToRedisArgs for Person {
+    //
+    fn write_redis_args<W>(&self, out: &mut W)
+    where
+        W: ?Sized + RedisWrite,
+    {
+        let content = serde_json::to_string(&self).unwrap();
+        out.write_arg(content.as_bytes());
+    }
+}
+
+fn test_custom(key: &str, con: &mut redis::Connection) -> redis::RedisResult<()> {
+    let data = Person {
+        id: 10,
+        name: "aaaa".to_string(),
+    };
+
+    redis::cmd("SET").arg(key).arg(data).execute(con);
+    let test: Person = con.get(key)?;
+    println!("a:{}", test.id);
+    println!("a:{}", test.name);
+    Ok(())
+}
+
 fn main() {
     let primitive_key = "my_key";
     let complex_key = "my_keyX";
@@ -98,6 +144,7 @@ fn main() {
             println!("Error:{:?}", err);
         }
     }
+    test_custom("_myHOGE", &mut con);
     println!("[Clear Data]");
     clear_data(&mut con);
 }
