@@ -65,15 +65,12 @@ struct Person {
 }
 
 impl FromRedisValue for Person {
-    //
     fn from_redis_value(data: &redis::Value) -> RedisResult<Self> {
-        // T.B.D
-        println!("from_redis_value:{:?}", data);
-        let result = Person {
-            id: 20,
-            name: "TEST".to_string(),
+        let json = match data {
+            redis::Value::Data(bytes) => std::string::String::from_utf8(bytes.to_vec())?,
+            _ => "".to_string(),
         };
-        println!("from_redis_value:{:?}", data);
+        let result: Person = serde_json::from_str(&json).unwrap();
         Ok(result)
     }
 }
