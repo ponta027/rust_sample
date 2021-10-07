@@ -25,9 +25,9 @@ $(function(){
 })
 
 function removeElement( obj ) {
-  let index = $("tr").index(obj.parentElement.parentElement);
-  // let index = obj.value;
-  let url = "/json/" + (index-1) + "/del"
+  //let index = $("tr").index(obj.parentElement.parentElement)-1;
+  let index = obj.value;
+  let url = "/json/" + index + "/del"
   $.ajax({
     type:"get",
     url:url,
