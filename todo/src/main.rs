@@ -1,10 +1,7 @@
 #[macro_use]
 extern crate rocket;
 use rocket::fs::NamedFile;
-use rocket::http::ContentType;
-use rocket_dyn_templates::tera;
 use rocket_dyn_templates::Template;
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 mod json;

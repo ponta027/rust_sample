@@ -6,12 +6,10 @@ use rocket::tokio::sync::Mutex;
 use rocket::State;
 use std::collections::HashMap;
 
-// The type to represent the ID of a message.
 type Id = usize;
-
-// We're going to store all of the messages here. No need for a DB.
 type MessageList = Mutex<HashMap<Id, String>>;
 type Messages<'r> = &'r State<MessageList>;
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(crate = "rocket::serde")]
 struct Message<'r> {
