@@ -1,9 +1,11 @@
 #!/bin/bash
 
-curl -X POST -H "Content-Type:application/json" -d '{"message":"HOGE"}' http://localhost:8000/json
+PORT=9000
 
-curl http://localhost:8000/json/0
+curl -X POST -H "Content-Type:application/json" -d '{"message":"HOGE"}' http://192.168.0.30:${PORT}/json
 
-curl -X PUT -H "Content-Type:application/json" -d '{"message":"HOGE2"}' http://localhost:8000/json/0
+curl http://192.168.0.30:${PORT}/json/0
 
-curl http://localhost:8000/json/0
+curl -X PUT -H "Content-Type:application/json" -d '{"message":"HOGE2"}' http://192.168.0.30:${PORT}/json/0
+
+curl http://192.168.0.30:${PORT}/json/0
