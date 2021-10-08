@@ -4,10 +4,10 @@ use rocket::serde::json::{json, Json, Value};
 use rocket::serde::{Deserialize, Serialize};
 use rocket::tokio::sync::Mutex;
 use rocket::State;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 type Id = usize;
-type MessageList = Mutex<HashMap<Id, String>>;
+type MessageList = Mutex<BTreeMap<Id, String>>;
 type Messages<'r> = &'r State<MessageList>;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -21,18 +21,19 @@ struct Message<'r> {
 async fn new(message: Json<Message<'_>>, list: Messages<'_>) -> Value {
     let mut list = list.lock().await;
     let mut key = 0;
-    match list.iter().max_by_key(|v| v.1) {
+    for (k, v) in list.iter() {
+        println!("BTreeMap key={},val={}", k, v);
+    }
+
+    match list.iter().max_by_key(|v| v.0) {
         Some(k) => {
             key = *k.0;
-            // println!("key,val =  ({},{})", k.0, k.1)
+            println!("key,val =  ({},{})", k.0, k.1)
         }
         _ => {}
     }
 
-    // for (k, v) in list.iter() {
-    //     println!("HashMap key={},val={}", k, v);
-    // }
-    // println!("max :{}", key);
+    println!("max :{}", key);
 
     let u = key + 1;
     list.insert(u, message.message.to_string());
@@ -93,6 +94,6 @@ pub fn stage() -> rocket::fairing::AdHoc {
         rocket
             .mount("/json", routes![new, update, get, get_all, del])
             .register("/json", catchers![not_found])
-            .manage(MessageList::new(HashMap::new()))
+            .manage(MessageList::new(BTreeMap::new()))
     })
 }
