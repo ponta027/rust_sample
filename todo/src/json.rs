@@ -40,7 +40,7 @@ async fn new(message: Json<Message<'_>>, list: Messages<'_>) -> Value {
     json!({ "status": "ok", "id": u })
 }
 
-#[put("/<id>", format = "json", data = "<message>")]
+#[post("/<id>", format = "json", data = "<message>")]
 async fn update(id: Id, message: Json<Message<'_>>, list: Messages<'_>) -> Option<Value> {
     match list.lock().await.get_mut(&id) {
         Some(existing) => {
@@ -73,6 +73,7 @@ async fn get_all(list: Messages<'_>) -> Option<Json<Vec<Message<'_>>>> {
     let mut data = Vec::new();
 
     for (key, val) in list2.clone() {
+        println!("({},{})", key, val);
         data.push(Message {
             id: Some(key),
             message: val.to_string().into(),

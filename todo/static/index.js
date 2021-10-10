@@ -17,15 +17,14 @@ $(function(){
       dataType:"json",
       success:function(json_data){
         console.log(json_data);
-        update( json_data, data.message);
+        insertData( json_data, data.message);
       }
     });
   });
-  test();
+  getAllElement();
 })
 
 function removeElement( obj ) {
-  //let index = $("tr").index(obj.parentElement.parentElement)-1;
   let index = obj.value;
   let url = "/json/" + index + "/del"
   $.ajax({
@@ -40,20 +39,47 @@ function removeElement( obj ) {
 
 }
 
-function update( result ,message){
-  $('#tbody').append('<tr><td>'+result.id+'</td><td>'+message+'</td><td><button type="button" class="btn btn-outline-primary" onclick="removeElement(this)" value='+result.id+'>Del</button></td></tr>');
+function changeEvent(elem){
+  const val = this.args.value;
+  const url = "/json/"+ this.args.parentElement.previousSibling.textContent;
+  let data={message:val};
+  $.ajax({
+    type:"post",
+    url:url,
+    data:JSON.stringify(data),
+    contentType:"application/json",
+    dataType:"json",
+    success:function(json_data){
+      console.log(json_data);
+    }
+  });
 }
 
-function test(){
+
+function insertData( result ,message){
+  insertElement($('#tbody'),result.id , message);
+}
+
+function insertElement( elem , idx, id , message ){
+  let line_data = '<tr><td>'+id+'</td><td><input type="email" class="form-control" id="editValue" value="'+message+'"/></td><td><button type="button" class="btn btn-outline-primary" onclick="removeElement(this)" value='+id+'>Del</button></td></tr>';
+
+  elem.append(line_data);
+  let form_elem = elem.find(".form-control")[idx];
+  form_elem.addEventListener("change", {args:form_elem,handleEvent:changeEvent,id:id});
+
+}
+function getAllElement(){
   $.ajax({
     type:"get",
     url:"/json/all",
     contentType:"application/json",
     dataType:"json",
     success:function(json_data){
+      let idx = 0;
       json_data.forEach(function(elem){
         console.log(elem);
-        $('#tbody').append('<tr><td>'+elem.id+'</td><td>'+elem.message+'</td><td><button type="button" class="btn btn-outline-primary" onclick="removeElement(this)" value='+elem.id+'>Del</button></td></tr>');
+        insertElement($('#tbody'),idx , elem.id , elem.message);
+        idx++;
       });
     }
   });
