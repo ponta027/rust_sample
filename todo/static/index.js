@@ -57,7 +57,8 @@ function changeEvent(elem){
 
 
 function insertData( result ,message){
-  insertElement($('#tbody'),result.id , message);
+  idx = $('#tbody tr').length;
+  insertElement($('#tbody'),idx , result.id , message);
 }
 
 function insertElement( elem , idx, id , message ){
