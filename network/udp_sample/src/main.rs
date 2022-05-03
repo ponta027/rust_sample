@@ -1,5 +1,5 @@
-use std::net::UdpSocket;
 use std::io;
+use std::net::UdpSocket;
 
 use structopt::StructOpt;
 
@@ -8,7 +8,7 @@ use structopt::StructOpt;
 #[structopt(name = "example", about = "sample program")]
 struct Cli {
     /// The pattern to look for
-    #[structopt(short, long)\
+    #[structopt(short, long)]
     client: bool,
 }
 
