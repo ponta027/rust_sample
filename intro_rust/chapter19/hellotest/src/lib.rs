@@ -5,6 +5,7 @@ struct Person {
     age: i32,
 }
 
+/*
 #[cfg(test)]
 mod tests {
     #[test]
@@ -88,7 +89,9 @@ mod tests {
         assert!(true);
         assert!(1==1);
     }
+
 }
+*/
 
 fn add(x: i32, y: i32) -> i32 {
     let ans = x + y;
