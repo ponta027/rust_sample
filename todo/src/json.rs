@@ -1,3 +1,4 @@
+
 use std::borrow::Cow;
 
 use rocket::serde::json::{json, Json, Value};
@@ -21,20 +22,10 @@ struct Message<'r> {
 async fn new(message: Json<Message<'_>>, list: Messages<'_>) -> Value {
     let mut list = list.lock().await;
     let mut key = 0;
-    for (k, v) in list.iter() {
-        println!("BTreeMap key={},val={}", k, v);
-    }
-
-    match list.iter().max_by_key(|v| v.0) {
-        Some(k) => {
-            key = *k.0;
-            println!("key,val =  ({},{})", k.0, k.1)
-        }
+    match list.iter().max() {
+        Some(n) => key = *n.0,
         _ => {}
     }
-
-    println!("max :{}", key);
-
     let u = key + 1;
     list.insert(u, message.message.to_string());
     json!({ "status": "ok", "id": u })
@@ -50,6 +41,7 @@ async fn update(id: Id, message: Json<Message<'_>>, list: Messages<'_>) -> Optio
         None => None,
     }
 }
+
 #[get("/<id>/del", format = "json")]
 async fn del(id: Id, list: Messages<'_>) -> Option<Value> {
     let mut list = list.lock().await;
@@ -71,12 +63,10 @@ async fn get(id: Id, list: Messages<'_>) -> Option<Json<Message<'_>>> {
 async fn get_all(list: Messages<'_>) -> Option<Json<Vec<Message<'_>>>> {
     let list2 = list.lock().await;
     let mut data = Vec::new();
-
-    for (key, val) in list2.clone() {
-        println!("({},{})", key, val);
+    for (key, val) in list2.iter() {
         data.push(Message {
-            id: Some(key),
-            message: val.to_string().into(),
+            id: Some(*key),
+            message: val.clone().into(),
         });
     }
     Some(Json(data))
@@ -100,3 +90,5 @@ pub fn stage() -> rocket::fairing::AdHoc {
             .manage(MessageList::new(BTreeMap::new()))
     })
 }
+
+
