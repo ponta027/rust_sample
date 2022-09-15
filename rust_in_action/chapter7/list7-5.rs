@@ -4,6 +4,9 @@ use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::Write;
+//
+use std::path::Path;
+use std::path::PathBuf;
 
 fn main() {
     //https://stackoverflow.com/questions/69341037/openoptions-write-not-working-properly-when-writing-to-filehttps://stackoverflow.com/questions/69341037/openoptions-write-not-working-properly-when-writing-to-file
@@ -23,4 +26,11 @@ fn main() {
     f.read_to_string(&mut content).unwrap();
     println!("content:{}", content);
     println!("Hello World");
+    {
+        println!("7.4.2 std::fs::Path");
+        let mut hello = PathBuf::from("/tmp/hello.txt");
+        println!("{:?}", hello.extension());
+        hello.pop();
+        println!("{:?}", hello.display());
+    }
 }
