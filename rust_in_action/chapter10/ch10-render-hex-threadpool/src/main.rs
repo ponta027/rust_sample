@@ -1,4 +1,8 @@
+//
+use crossbeam::channel::unbounded;
 use std::env;
+use std::thread;
+
 use svg::node::element::path::{Command, Data, Position};
 use svg::node::element::{Path, Rectangle};
 use svg::Document;
@@ -94,8 +98,27 @@ impl Artist {
 }
 
 ///
+///
+enum Work {
+    Task((usize, u8)),
+    Finished,
+}
+
+fn parse_byte(byte: u8) -> Operation {
+    match byte {
+        b'0' => Home,
+        b'1'..=b'9' => {
+            let distance = (byte - 0x30) as isize;
+            Forward(distance * (HEIGHT / 10))
+        }
+        b'a' | b'b' | b'c' => TurnLeft,
+        b'd' | b'e' | b'f' => TurnRight,
+        _ => Noop(byte),
+    }
+}
+
 fn parse(input: &str) -> Vec<Operation> {
-    ///
+    /*
     let mut steps = Vec::<Operation>::new();
     for byte in input.bytes() {
         let step = match byte {
@@ -111,6 +134,40 @@ fn parse(input: &str) -> Vec<Operation> {
         steps.push(step);
     }
     steps
+    */
+    let n_thread = 2;
+    let (todo_tx, todo_rx) = unbounded();
+    let (result_tx, result_rx) = unbounded();
+
+    let mut n_bytes = 0;
+    for (i, byte) in input.bytes().enumerate() {
+        todo_tx.send(Work::Task((i, byte))).unwrap();
+        n_bytes += 1;
+        //
+    }
+    for _ in 0..n_thread {
+        todo_tx.send(Work::Finished).unwrap();
+    }
+
+    for _ in 0..n_thread {
+        let todo = todo_rx.clone();
+        let results = result_tx.clone();
+        thread::spawn(move || loop {
+            let task = todo.recv();
+            let result = match task {
+                Err(_) => break,
+                Ok(Work::Finished) => break,
+                Ok(Work::Task((i, byte))) => (i, parse_byte(byte)),
+            };
+            results.send(result).unwrap();
+        });
+    }
+    let mut ops = vec![Noop(0); n_bytes];
+    for _ in 0..n_bytes {
+        let (i, op) = result_rx.recv().unwrap();
+        ops[i] = op;
+    }
+    ops
 }
 ///
 fn convert(operations: &Vec<Operation>) -> Vec<Command> {
