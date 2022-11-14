@@ -6,6 +6,8 @@ use svg::Document;
 use crate::Operation::{Forward, Home, Noop, TurnLeft, TurnRight};
 use crate::Orientation::{East, North, South, West};
 
+use rayon::prelude::*;
+
 ///
 const WIDTH: isize = 400;
 const HEIGHT: isize = WIDTH;
@@ -95,7 +97,21 @@ impl Artist {
 
 ///
 fn parse(input: &str) -> Vec<Operation> {
-    ///
+    input
+        .as_bytes()
+        .par_iter()
+        .map(|byte| match byte {
+            b'0' => Home,
+            b'1'..=b'9' => {
+                let distance = (byte - 0x30) as isize;
+                Forward(distance * (HEIGHT / 10))
+            }
+            b'a' | b'b' | b'c' => TurnLeft,
+            b'd' | b'e' | b'f' => TurnRight,
+            _ => Noop(*byte),
+        })
+        .collect()
+    /*
     let mut steps = Vec::<Operation>::new();
     for byte in input.bytes() {
         let step = match byte {
@@ -111,6 +127,7 @@ fn parse(input: &str) -> Vec<Operation> {
         steps.push(step);
     }
     steps
+    */
 }
 ///
 fn convert(operations: &Vec<Operation>) -> Vec<Command> {
