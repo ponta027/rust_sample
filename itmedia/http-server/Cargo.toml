@@ -1,0 +1,21 @@
+[package]
+name = "http-server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[[bin]]
+name = "http-server"
+path = "src/main.rs"
+
+[[bin]]
+name = "actix-web"
+path = "src/actix/main.rs"
+
+
+[dependencies]
+actix-rt = "2.9.0"
+actix-web = "4.4.1"
+regex = "1.9.5"
