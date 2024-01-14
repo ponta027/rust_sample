@@ -1,9 +1,10 @@
-use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
-use chrono::{DateTime, Duration, Local};
+use actix_web::{get,  post, web,  HttpResponse,  Responder};
+use chrono::{DateTime,  Local};
 use log::info;
+use utoipa::ToSchema;
 
 use serde::Deserialize;
-mod data;
+pub mod data;
 
 #[get("/posts")]
 async fn index() -> impl Responder {
@@ -69,7 +70,7 @@ async fn show(info: web::Path<i32>) -> impl Responder {
         .body(body_str)
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug,ToSchema)]
 pub struct CreateForm {
     id: i32,
     posted: String,
@@ -93,3 +94,57 @@ pub async fn create(params: web::Form<CreateForm>) -> impl Responder {
 pub async fn not_found() -> impl Responder {
     HttpResponse::NotFound().body("Page Not found!")
 }
+#[utoipa::path(get, 
+    path = "/json/posts", 
+    tag="sample",
+    responses(
+        ( status=200, description="all message")
+    )
+)]
+#[get("/json/posts")]
+async fn json_posts() -> impl Responder {
+    let posts = data::get_all();
+    web::Json(posts)
+}
+
+
+#[utoipa::path(get, 
+    path="/json/post/{id}",
+    tag="sample",
+    responses(
+        (status=200, description="specified message",body=Message)
+    ),
+    params(
+        ("id"=i32 , Path ,description="")
+    )
+)]
+#[get("/json/post/{id}")]
+async fn json_show(info: web::Path<i32>) -> impl Responder {
+    let info = info.into_inner();
+    let post = data::get(info.try_into().unwrap());
+    web::Json(post)
+}
+
+#[utoipa::path(post, 
+    path="/json/posts/create",
+    tag="sample",
+    responses(
+        (status=200, description="specified message",body=Message)
+    ),
+    request_body=CreateForm
+)]
+
+#[post("/json/posts/create")]
+pub async fn json_create(params: web::Form<CreateForm>) -> impl Responder {
+    let now: DateTime<Local> = Local::now();
+    let mut message = data::Message {
+        id: 0,
+        posted: now.format("%Y-%m-%d %H:%M:%S").to_string(),
+        sender: params.sender.clone(),
+        content: params.content.clone(),
+    };
+    message = data::create(message);
+    web::Redirect::to(format!("/json/posts/{}", message.id)).see_other()
+}
+
+
