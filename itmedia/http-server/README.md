@@ -29,6 +29,10 @@ https://docs.rs/utoipa/latest/utoipa/derive.OpenApi.html
 https://github.com/juhaku/utoipa/tree/master/examples/todo-actix
 
 
+## html template
+
+* [tera](https://keats.github.io/tera/)
+
 -------------------------------------------
 
 

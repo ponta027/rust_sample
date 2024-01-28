@@ -24,6 +24,7 @@ log = "0.4.20"
 regex = "1.9.5"
 serde = {version="1.0.194",features=["derive"]}
 serde_json = "1.0.110"
+tera = "1.19.1"
 utoipa = { version = "4.1.0", features = ["actix_extras", "chrono", "serde_yaml"] }
 utoipa-swagger-ui = { version = "5.0.0", features = ["actix-web"] }
 

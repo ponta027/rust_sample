@@ -1,9 +1,11 @@
-use actix_web::{get,  post, web,  HttpResponse,  Responder};
+use actix_web::{get,  post, web,  HttpResponse,  Responder,error,Error};
 use chrono::{DateTime,  Local};
 use log::info;
 use utoipa::ToSchema;
 
-use serde::Deserialize;
+use serde::{Deserialize,Serialize};
+
+
 pub mod data;
 
 #[get("/posts")]
@@ -25,8 +27,16 @@ async fn index() -> impl Responder {
         .body(body_str)
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Project {
+    pub id: i64,
+    pub name: String,
+    pub url_name: String
+}
+
 #[get("/posts/new")]
-pub async fn new() -> impl Responder {
+//pub async fn new(tmpl: web::Data<tera::Tera>) -> impl Responder {
+pub async fn new(tmpl: web::Data<tera::Tera>) ->Result< impl Responder ,Error>{
     let mut body_str: String = "".to_string();
     body_str += include_str!("../static/header.html");
     body_str += include_str!("../static/form.html");
@@ -37,9 +47,21 @@ pub async fn new() -> impl Responder {
     body_str = body_str.replace("{{sender}}", "");
     body_str = body_str.replace("{{content}}", "");
     body_str = body_str.replace("{{button}}", "登録");
+    let mut ctx = tera::Context::new();
+    let data=Project{
+        id:1,
+        name:String::from("test"),
+        url_name:String::from("http://example.com"),
+    };
+    ctx.insert("Test","Sample");
+    ctx.insert("data",&data);
+    let s = tmpl.render("index.html",&ctx).map_err(|e|  error::ErrorInternalServerError(e))?;
+    /*
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
         .body(body_str)
+    */
+    Ok(HttpResponse::Ok().content_type("text/html;charset=utf-8").body(s))
 }
 
 #[get("/posts/{id}")]

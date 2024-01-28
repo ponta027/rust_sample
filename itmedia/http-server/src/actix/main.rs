@@ -6,6 +6,8 @@ use std::io::Result;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
+use tera::Tera;
+
 mod handler;
 
 #[get("/")]
@@ -33,7 +35,9 @@ async fn main() -> Result<()> {
     ]
     struct ApiDoc;
     HttpServer::new(|| {
+        let tera = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*")).unwrap();
         App::new()
+            .app_data(web::Data::new(tera))
             .service(handler::index)
             .service(handler::new)
             .service(handler::create)
