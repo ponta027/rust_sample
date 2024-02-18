@@ -1,0 +1,11 @@
+
+{% for post in posts %}
+<div><a href="/posts/{{ post.id }}">
+    <div>{{ post.sender }} {{ post.posted }}</div>
+    <div><p>{{ post.content }} </p></div>
+  </a>
+</div>
+{% endfor %}
+
+<div><a href="/posts/new">作成</a></div>
+

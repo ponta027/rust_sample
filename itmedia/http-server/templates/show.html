@@ -1,0 +1,11 @@
+<div>
+  <div> 投稿者 {{ post.sender }} </div>
+  <div> 投稿日時: {{ post.posted }}  </div>
+  <div> 投稿内容: <br/> {{ post.content }} </div><br/>
+  <div>
+    <a href="/posts/{{ info }}/edit">編集</a> 
+    <a href="/posts/{{ info }}/delete">削除</a>
+  </div>
+  <div><a href="/posts">一覧へ</a></div>
+</div>
+

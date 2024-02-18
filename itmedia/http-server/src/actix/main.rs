@@ -1,6 +1,13 @@
+use crate::handler::data::Message;
+use crate::handler::CreateForm;
 use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 use std::io::Result;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
+
+use tera::Tera;
+
 mod handler;
 
 #[get("/")]
@@ -12,12 +19,35 @@ async fn index() -> impl Responder {
 async fn main() -> Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
+    #[derive(OpenApi)]
+    #[openapi(
+        paths(
+            handler::json_posts,
+            handler::json_show,
+            handler::json_create,
+            ),
+        components(
+            schemas(Message,
+                CreateForm)
+        ),
+        tags((name="sample" , description="sample tags"))
+        )
+    ]
+    struct ApiDoc;
     HttpServer::new(|| {
+        let tera = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*")).unwrap();
         App::new()
+            .app_data(web::Data::new(tera))
             .service(handler::index)
             .service(handler::new)
             .service(handler::create)
             .service(handler::show)
+            .service(handler::json_posts)
+            .service(handler::json_show)
+            .service(
+                SwaggerUi::new("/swagger-ui/{_:.*}")
+                    .url("/api-doc/opanapi.json", ApiDoc::openapi()),
+            )
             .default_service(web::to(handler::not_found))
             .wrap(Logger::default())
     })

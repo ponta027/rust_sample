@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
+use utoipa::ToSchema;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, ToSchema)]
 pub struct Message {
     pub id: u32,
     pub posted: String,
@@ -20,7 +21,7 @@ pub fn get_all() -> Vec<Message> {
 
 pub fn get(id: u32) -> Message {
     let file = fs::read_to_string(DATA_FILENAME).unwrap();
-    let mut json_data: Vec<Message> = serde_json::from_str(&file).unwrap();
+    let json_data: Vec<Message> = serde_json::from_str(&file).unwrap();
     let mut message = Message {
         id: 0,
         posted: "".to_string(),
