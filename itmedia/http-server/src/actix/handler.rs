@@ -9,22 +9,14 @@ use serde::{Deserialize,Serialize};
 pub mod data;
 
 #[get("/posts")]
-async fn index() -> impl Responder {
+async fn index(tmpl: web::Data<tera::Tera>) -> Result<impl Responder ,Error>{
     info!("Called Index");
     let posts = data::get_all();
-    let mut body_str: String = "".to_string();
-    body_str += include_str!("../static/header.html");
-    for item in &posts {
-        body_str += &format!("<div><a href=\"/posts/{}\">", item.id);
-        body_str += &format!("<div>{} {}</div>", item.sender, item.posted);
-        body_str += &format!("<div><p>{} </p></div>", item.content.replace("\n", "<br/>"));
-        body_str += &format!("</a</div>");
-    }
-    body_str += "<div><a href=\"/posts/new\">作成</a></div>";
-    body_str += include_str!("../static/footer.html");
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(body_str)
+    let mut ctx = tera::Context::new();
+    ctx.insert("posts",&posts);
+    let s = tmpl.render("index.html",&ctx).map_err(|e|  error::ErrorInternalServerError(e))?;
+    Ok(HttpResponse::Ok().content_type("text/html;charset=utf-8").body(s))
+
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -37,65 +29,40 @@ pub struct Project {
 #[get("/posts/new")]
 //pub async fn new(tmpl: web::Data<tera::Tera>) -> impl Responder {
 pub async fn new(tmpl: web::Data<tera::Tera>) ->Result< impl Responder ,Error>{
-    let mut body_str: String = "".to_string();
-    body_str += include_str!("../static/header.html");
-    body_str += include_str!("../static/form.html");
-    body_str += include_str!("../static/footer.html");
-    body_str = body_str.replace("{{action}}", "create");
-    body_str = body_str.replace("{{id}}", "0");
-    body_str = body_str.replace("{{posted}}", "");
-    body_str = body_str.replace("{{sender}}", "");
-    body_str = body_str.replace("{{content}}", "");
-    body_str = body_str.replace("{{button}}", "登録");
     let mut ctx = tera::Context::new();
     let data=Project{
         id:1,
         name:String::from("test"),
         url_name:String::from("http://example.com"),
     };
+    ctx.insert("action", "create");
+    ctx.insert("id", "0");
+    ctx.insert("posted", "");
+    ctx.insert("sender", "");
+    ctx.insert("content", "");
+    ctx.insert("button", "登録");
     ctx.insert("Test","Sample");
     ctx.insert("data",&data);
-    let s = tmpl.render("index.html",&ctx).map_err(|e|  error::ErrorInternalServerError(e))?;
-    /*
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(body_str)
-    */
+    let s = tmpl.render("new.html",&ctx).map_err(|e|  error::ErrorInternalServerError(e))?;
     Ok(HttpResponse::Ok().content_type("text/html;charset=utf-8").body(s))
 }
 
 #[get("/posts/{id}")]
-async fn show(info: web::Path<i32>) -> impl Responder {
+async fn show(info: web::Path<i32>,tmpl: web::Data<tera::Tera>) -> Result<impl Responder,Error> {
     info!("Call show");
     let info = info.into_inner();
     let post = data::get(info.try_into().unwrap());
-    let mut body_str: String = "".to_string();
-    body_str += include_str!("../static/header.html");
-    body_str += "<div>";
-    if post.id != 0 {
-        body_str += &format!("<div>投稿者：{}</div>", post.sender);
-        body_str += &format!("<div>投稿日時：{}</div>", post.posted);
-        body_str += &format!(
-            "<div>投稿内容：<br />{}</div>",
-            post.content.replace("\n", "<br />")
-        );
-        body_str += &format!("<div><a href=\"/posts/{}/edit\">編集</a> ", info);
-        body_str += &format!("<a href=\"/posts/{}/delete\">削除</a><div>", info);
-    } else {
-        body_str += "見つかりません。";
-    }
-    body_str += "</div>";
-    body_str += "<div><a href=\"/posts\">一覧へ</a></div>";
-    body_str += include_str!("../static/footer.html");
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(body_str)
+    let mut ctx = tera::Context::new();
+    ctx.insert("post",&post);
+    ctx.insert("info",&info);
+    let s = tmpl.render("show.html",&ctx).map_err(|e|  error::ErrorInternalServerError(e))?;
+    Ok(HttpResponse::Ok().content_type("text/html;charset=utf-8").body(s))
 }
 
 #[derive(Deserialize, Debug,ToSchema)]
 pub struct CreateForm {
-    id: i32,
-    posted: String,
+    //id: i32,
+    //posted: String,
     sender: String,
     content: String,
 }
