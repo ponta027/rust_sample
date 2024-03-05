@@ -104,7 +104,24 @@ npm run start
 ```
 
 
+
 ブラウザでhttp://localhost:8080 を開くとアラートが表示される
 
+## Exercises
 
+lib.rsのgreeting関数に引数をして、jsから引数ありの呼び出しをしてみる。
+
+lib.rs
+
+```
+pub fn greet(name: &str) {
+    alert(&format!("Hello, {}!", name));
+}
+```
+
+index.js
+
+```
+wasm.greet("Your Name");
+```
 
