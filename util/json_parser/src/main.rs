@@ -16,16 +16,28 @@ impl Info {
 }
 
 async fn get_main_summary(data: String) -> Vec<Info> {
+    println!("{}", data);
     let json: serde_json::Value = serde_json::from_str(&data).unwrap();
     let result = &json["main_summary"];
     let arr = result["children"].as_array();
     let mut list = Vec::new();
     for item in arr.unwrap() {
         for it in item["children"].as_array().unwrap() {
-            let _info = Info {
-                attr: it["attr"].as_str().unwrap().to_string(),
-                value: it["value"].as_u64().unwrap(),
-            };
+            let mut _info;
+            match it["value"].as_u64() {
+                Some(value) => {
+                    _info = Info {
+                        attr: it["attr"].as_str().unwrap().to_string(),
+                        value: value,
+                    };
+                }
+                None => {
+                    _info = Info {
+                        attr: it["attr"].as_str().unwrap().to_string(),
+                        value: 0,
+                    };
+                }
+            }
             list.push(_info);
         }
     }
