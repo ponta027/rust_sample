@@ -1,99 +1,55 @@
-use encoding_rs;
-use std::collections::BTreeMap;
-use std::fs;
-use std::io;
-use std::iter::FromIterator;
-use std::path::Path;
-use structopt::StructOpt;
-
-#[derive(Debug, StructOpt)]
-#[structopt(name = "word count", about = "Word Count Tool")]
-struct Cli {
-    #[structopt(short = "f", conflicts_with_all(&["d"]))]
-    f: bool,
-    #[structopt(short = "d", conflicts_with_all(&["f"]))]
-    d: bool,
-    #[structopt(short = "p", long = "path")]
-    path: std::path::PathBuf,
-}
-
-/**
- *
- */
-fn read_dir(path: &Path) -> io::Result<Vec<String>> {
-    Ok(fs::read_dir(path)?
-        .filter_map(|entry| {
-            let entry = entry.ok()?;
-            if entry.file_type().ok()?.is_file() {
-                Some(
-                    path.to_string_lossy().into_owned()
-                        + "/"
-                        + &entry.file_name().to_string_lossy().into_owned(),
-                )
-            } else {
-                None
-            }
-        })
-        .collect())
-}
-/**
- */
-fn read_file(file_name: &str) -> String {
-    let s = fs::read(file_name).unwrap();
-    let (res, _, _) = encoding_rs::SHIFT_JIS.decode(&s);
-    let contents = res.into_owned();
-    contents
-        .replace('"', " ")
-        .replace("'", " ")
-        .replace("\n", " ") //
-        .replace("\r", " ") //
-        .replace(";", " ") //
-        .replace(":", " ") //
-        .replace(":", " ") //
-        .replace(",", " ") //
-        .replace("<", " ") //
-        .replace(">", " ") //
-        .to_string()
-}
+use clap::{App, Arg};
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::Read;
 
 fn main() {
-    let cli = Cli::from_args();
-    let mut word_map = BTreeMap::new();
-    let path = cli.path;
-    let mut file_list: Vec<String> = Vec::new();
-    if cli.d {
-        let file_extension = ".html";
-        if path.is_dir() {
-            for file in read_dir(Path::new(&path)).unwrap() {
-                match file.rfind(file_extension) {
-                    Some(size) => {
-                        if size == file.len() - file_extension.len() {
-                            file_list.push(file);
-                        }
-                    }
-                    _ => {}
-                }
-            }
-        } else {
-            panic!("{} is not directory", path.to_string_lossy().into_owned());
+    let matches = App::new("File Reader")
+        .version("1.0")
+        .author("ponta27")
+        .about("Reads the contents of a file")
+        .arg(
+            Arg::with_name("file")
+                .help("Sets the input file to read")
+                .required(true)
+                .index(1),
+        )
+        .get_matches();
+
+    let file_path = matches.value_of("file").unwrap();
+    let mut file = match File::open(file_path) {
+        Ok(file) => file,
+        Err(err) => {
+            eprintln!("Error opening file {}: {}", file_path, err);
+            std::process::exit(1);
         }
-    } else if cli.f {
-        let target_file = path.to_string_lossy().into_owned();
-        file_list.push(target_file);
+    };
+
+    //    let reader = io::BufReader::new(file);
+    let mut contents = String::new();
+    let file_text = file.read_to_string(&mut contents);
+    println!("file:{}:{:?}", file_path, file_text);
+    // 分析する文章
+    let text = contents;
+    // ピリオドをスペースに置換
+    let text = text.replace(".", " ");
+
+    // 単語の出現回数を記録するHashMapを作成
+    let mut word_counts = HashMap::new();
+
+    // 文章を単語に分割して単語ごとの出現回数をカウント
+    for word in text.split_whitespace() {
+        // 単語を小文字に変換してからカウント
+        let word = word.to_lowercase();
+
+        // 単語の出現回数を更新
+        let count = word_counts.entry(word).or_insert(0);
+        *count += 1;
     }
 
-    for file_path in file_list {
-        println!("path={}", file_path);
-        let result = read_file(&file_path);
-        let split: Vec<&str> = result.split(" ").collect();
-        for item in split {
-            //for item in data {
-            *word_map.entry(item.trim().to_string()).or_insert(0) += 1;
-        }
-    }
-    let mut v = Vec::from_iter(&word_map);
-    v.sort_by(|&(_, a), &(_, b)| b.cmp(&a));
-    for item in v {
-        println!("key [{}] , val [{}]", item.0, item.1);
+    // 結果を表示
+    println!("Word frequencies:");
+    for (word, count) in &word_counts {
+        println!("{}: {}", word, count);
     }
 }
