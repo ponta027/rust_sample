@@ -1,6 +1,5 @@
 use rocket::http::ContentType;
 
-use rocket_dyn_templates::tera;
 use rocket_dyn_templates::Template;
 use std::collections::HashMap;
 
