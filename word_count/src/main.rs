@@ -25,7 +25,6 @@ fn main() {
         }
     };
 
-    //    let reader = io::BufReader::new(file);
     let mut contents = String::new();
     let file_text = file.read_to_string(&mut contents);
     println!("file:{}:{:?}", file_path, file_text);
