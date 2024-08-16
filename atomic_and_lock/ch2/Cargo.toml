@@ -1,0 +1,17 @@
+[package]
+name = "ch2"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "progress"
+path = "src/progress.rs"
+
+[[bin]]
+name = "park"
+path = "src/park.rs"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
