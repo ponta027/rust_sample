@@ -1,0 +1,44 @@
+[package]
+name = "ch2"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "progress"
+path = "src/progress.rs"
+
+[[bin]]
+name = "progress_multi"
+path = "src/progress_multi.rs"
+
+
+[[bin]]
+name = "park"
+path = "src/park.rs"
+
+[[bin]]
+name = "lazy"
+path = "src/lazy.rs"
+
+[[bin]]
+name = "fetch_and_modify"
+path = "src/fetch_and_modify.rs"
+
+[[bin]]
+name = "statics"
+path = "src/statics.rs"
+
+[[bin]]
+name = "allocate_id"
+path = "src/allocate_id.rs"
+
+
+[[bin]]
+name = "compare_exchange"
+path = "src/compare_exchange.rs"
+
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]

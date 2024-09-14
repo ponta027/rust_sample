@@ -1,0 +1,39 @@
+[package]
+name = "ch3"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "thread_join"
+path = "src/thread_join.rs"
+
+[[bin]]
+name = "relaxed"
+path = "src/relaxed.rs"
+
+[[bin]]
+name = "release_acquire"
+path = "src/release_acquire.rs"
+
+[[bin]]
+name = "lock"
+path = "src/lock.rs"
+
+[[bin]]
+name = "lazy_init"
+path = "src/lazy_init.rs"
+
+[[bin]]
+name = "seq_consistent"
+path = "src/seq_consistent.rs"
+
+[[bin]]
+name = "fence"
+path = "src/fence.rs"
+
+
+
+
+[dependencies]
