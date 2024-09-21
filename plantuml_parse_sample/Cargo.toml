@@ -1,0 +1,14 @@
+[package]
+name = "plantuml_parse_sample"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+plantuml-parser= "0.5.1"
+anyhow = "1.0.79"
+regex= "1.10.6"
+clap = { version = "3.0.5", features = ["derive"] }
+
+

@@ -1,0 +1,20 @@
+@startuml
+
+participant  AAAA
+participant   BBBB
+participant CCCC
+participant Bob
+participant Alice
+
+
+AAAA -> BBBB: aaaa
+BBBB -> CCCC: sample
+note across
+  sample note....
+end note
+BBBB <-- CCCC
+AAAA <-- BBBB: bbbbb
+
+Bob -[#red]> Alice : hello
+Alice -[#0000FF]->Bob : ok
+@enduml
