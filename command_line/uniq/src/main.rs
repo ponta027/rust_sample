@@ -1,7 +1,7 @@
-use clap::Parser;
-mod uniq;
 use crate::uniq::uniq::run;
 use crate::uniq::uniq::UniqOption;
+use clap::Parser;
+mod uniq;
 
 #[derive(Debug, Parser)]
 struct Args {
@@ -19,9 +19,12 @@ struct Args {
 fn main() {
     let arg = Args::parse();
 
-    let _ = run(UniqOption {
+    if let Err(e) = run(UniqOption {
         in_file: arg.in_file,
         out_file: arg.out_file,
         count: arg.count,
-    });
+    }) {
+        eprintln!("{:?}", e);
+        std::process::exit(1);
+    }
 }

@@ -1,5 +1,4 @@
-use anyhow::anyhow;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Write};
 
@@ -19,9 +18,11 @@ pub fn run(option: UniqOption) -> Result<()> {
     let mut print = |num: u64, text: &str| {
         //
         if num > 0 {
-            write!(out_file, "{num:>4} {text}").unwrap();
-        } else {
-            write!(out_file, "{text}").unwrap();
+            if option.count {
+                write!(out_file, "{num:>4} {text}").unwrap();
+            } else {
+                write!(out_file, "{text}").unwrap();
+            }
         }
     };
 

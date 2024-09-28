@@ -40,7 +40,32 @@ INPUT (または標準入力) から行を読み込み、
 'sort -u' を使用することもできます。
 ```
 
+## コマンドのヘルプ
+
+```
+Usage: uniq [OPTIONS] [FILE] [OUT_FILE]
+
+Arguments:
+  [FILE]      Input  file [default: -]
+  [OUT_FILE]  Output file
+
+Options:
+  -c, --count  Show counts
+  -h, --help   Print help
+```
+
+
+## test
+
+ユニットテストではなく、結合テストで実施する。
+
+
+```
+cargo test --target-dir tests
+```
+
 -------------------------------------------
+
 
 
 
