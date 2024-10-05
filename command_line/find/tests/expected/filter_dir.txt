@@ -1,0 +1,3 @@
+tests/name_filter
+tests/name_filter/test
+tests/name_filter/test2
