@@ -1,0 +1,3 @@
+tests/name_filter/test/12345.txt
+tests/name_filter/test/abcd.txt
+tests/name_filter/test/ab12345cd.txt
