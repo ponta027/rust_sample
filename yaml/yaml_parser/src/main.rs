@@ -22,6 +22,7 @@ fn main() {
     let filename = args.files;
     let s = fs::read_to_string(&filename).unwrap().to_string();
     let docs = YamlLoader::load_from_str(&s);
+    /*
     match docs {
         Ok(docs) => {
             let doc = &docs[0];
@@ -31,6 +32,7 @@ fn main() {
             eprintln!("{e}");
         }
     };
+    */
     let ret = OpenApi::new(filename);
     println!("{:?}", ret);
     //    parse(&filename);

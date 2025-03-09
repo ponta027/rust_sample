@@ -33,11 +33,11 @@ impl Parameters {
             .into_iter()
             .filter(|s| s.0.as_str() == Some("parameters"))
             .flat_map(|s| s.1.as_vec().unwrap().into_iter())
-            .map(|s| Self::createParameter(s))
+            .map(|s| Self::ceate_parameter(s))
             .collect();
         param
     }
-    fn createParameter(yaml: &Yaml) -> Parameter {
+    fn ceate_parameter(yaml: &Yaml) -> Parameter {
         Parameter {
             name: yaml["name"].as_str().unwrap().to_string(),
             in_type: Self::convert_in_type(yaml["in"].as_str().unwrap()),
