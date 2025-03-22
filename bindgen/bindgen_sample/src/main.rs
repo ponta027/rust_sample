@@ -1,26 +1,32 @@
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
-
-use crate::root::test;
-use crate::root::MyClass;
-use crate::root::MyClassInherit;
-
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+//use crate::sample::callback;
+use crate::sample::callback;
+use crate::sample::myclass;
+use crate::sample::myclass_inherit;
+use crate::sample::myclass_ns;
+mod sample;
+// Rust のコールバック関数
+extern "C" fn rust_callback(value: i32) {
+    println!("Rust callback called with value: {}", value);
+}
 
 fn main() {
     println!("Hello, world!");
-    unsafe {
-        let mut test = MyClass::new();
-        test.method();
-        test.method_bool(true);
-    }
-    unsafe {
-        let mut test = test::MyClass::new();
-        test.method();
-    }
-    unsafe {
-        let mut test = MyClassInherit::new();
-        test.method();
-    }
+
+    //
+    let mut test = myclass::Sample_MyClass::new();
+    test.method();
+    test.method_bool(true);
+
+    //
+    let mut test = myclass_ns::Sample_MyClass::new();
+    test.method();
+
+    //
+    let mut test = myclass_inherit::Sample_MyClass::new();
+    test.method();
+
+    //
+    let mut cbk = callback::Sample_MyClass::new();
+    cbk.method_callback(Some(rust_callback));
+    cbk.call_function(42);
 }
