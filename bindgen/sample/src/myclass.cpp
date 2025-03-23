@@ -13,10 +13,10 @@ void MyClass::method(void)
   std::cout << "sample" << std::endl;
   return;
 }
-void MyClass::method_bool(bool val)
+bool MyClass::method_bool(bool val)
 {
   std::cout << "method_bool:" << val << std::endl;
-  return;
+  return val;
 }
 #if 0
 void MyClass::method_function(std::function<void(bool,void*)> callback)
