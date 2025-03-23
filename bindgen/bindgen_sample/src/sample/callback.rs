@@ -41,3 +41,38 @@ impl Drop for Sample_MyClass {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    static mut result: i32 = 0;
+    use super::*;
+    // Rust のコールバック関数
+    extern "C" fn rust_callback(value: i32) {
+        println!("Rust callback called with value: {}", value);
+        unsafe {
+            result = value;
+        }
+    }
+
+    #[test]
+    pub fn method() {
+        let mut test = Sample_MyClass::new();
+        test.method();
+    }
+    #[test]
+    pub fn method_callback() {
+        let mut test = Sample_MyClass::new();
+        test.method_callback(Some(rust_callback));
+    }
+    #[test]
+    pub fn call_function() {
+        let val = 42;
+        let mut test = Sample_MyClass::new();
+
+        test.method_callback(Some(rust_callback));
+        test.call_function(val);
+        unsafe {
+            assert_eq!(result, 42);
+        }
+    }
+}

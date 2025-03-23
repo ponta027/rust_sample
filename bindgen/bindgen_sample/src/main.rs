@@ -1,4 +1,5 @@
 //use crate::sample::callback;
+
 use crate::sample::callback;
 use crate::sample::myclass;
 use crate::sample::myclass_inherit;

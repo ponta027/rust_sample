@@ -6,6 +6,7 @@ public:
   MyClass();
   ~MyClass();
   void method(void);
-  void method_bool(bool val);
+  bool method_bool(bool val);
+
 };
 #endif

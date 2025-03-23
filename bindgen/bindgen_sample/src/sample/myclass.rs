@@ -21,10 +21,9 @@ impl Sample_MyClass {
             self.raw.method();
         }
     }
-    pub fn method_bool(&mut self, arg1: bool) {
-        unsafe {
-            self.raw.method_bool(arg1);
-        }
+
+    pub fn method_bool(&mut self, arg1: bool) -> bool {
+        unsafe { self.raw.method_bool(arg1) }
     }
 }
 impl Drop for Sample_MyClass {
@@ -33,5 +32,21 @@ impl Drop for Sample_MyClass {
         unsafe {
             self.raw.destruct();
         }
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    pub fn method() {
+        let mut test = Sample_MyClass::new();
+        test.method();
+        test.method_bool(true);
+    }
+    #[test]
+    pub fn method_bool() {
+        let mut test = Sample_MyClass::new();
+        let result = test.method_bool(true);
+        assert_eq!(result, true);
     }
 }

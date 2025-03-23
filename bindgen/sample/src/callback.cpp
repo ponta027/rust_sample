@@ -1,6 +1,6 @@
 #include "callback.h"
-#include <iostream>
 #include <functional>
+#include <iostream>
 // `std::function<void(int)>` を隠蔽するための構造体
 struct FunctionWrapper
 {
@@ -20,8 +20,9 @@ void CallBackClass::method(void)
 }
 void CallBackClass::method_callback(void (*callback)(int))
 {
-  cbk = create_function( callback); 
+  cbk = create_function(callback);
 }
+
 
 // `std::function` を作成し、そのポインタを返す
 function_handle_t CallBackClass::create_function(void (*callback)(int)) {

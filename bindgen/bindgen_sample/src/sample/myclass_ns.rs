@@ -30,3 +30,13 @@ impl Drop for Sample_MyClass {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    pub fn method() {
+        let mut test = Sample_MyClass::new();
+        test.method();
+    }
+}
