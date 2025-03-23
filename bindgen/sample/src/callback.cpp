@@ -18,20 +18,18 @@ CallBackClass::~CallBackClass()
 void CallBackClass::method(void)
 {
 }
-void CallBackClass::method_callback(void (*callback)(int))
+void CallBackClass::set_callback(void (*callback)(int))
 {
   cbk = create_function(callback);
 }
 
-
 // `std::function` を作成し、そのポインタを返す
-function_handle_t CallBackClass::create_function(void (*callback)(int)) {
-    return new FunctionWrapper{[callback](int value) {
-        callback(value);
-    }};
+function_handle_t CallBackClass::create_function(void (*callback)(int))
+{
+  return new FunctionWrapper{[callback](int value) { callback(value); }};
 }
 // `std::function` を実行する
-void CallBackClass::call_function( int value)
+void CallBackClass::call_function(int value)
 {
   if (cbk)
   {
