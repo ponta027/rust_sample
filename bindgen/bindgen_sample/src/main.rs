@@ -28,6 +28,6 @@ fn main() {
 
     //
     let mut cbk = callback::Sample_MyClass::new();
-    cbk.method_callback(Some(rust_callback));
+    cbk.set_callback(Some(rust_callback));
     cbk.call_function(42);
 }

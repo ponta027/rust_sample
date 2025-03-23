@@ -10,7 +10,7 @@ public:
   CallBackClass();
   ~CallBackClass();
   void method(void);
-  void method_callback(void (*callback)(int));
+  void set_callback(void (*callback)(int));
 
   void call_function(int value);
 

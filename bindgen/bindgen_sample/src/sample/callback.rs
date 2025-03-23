@@ -22,9 +22,9 @@ impl Sample_MyClass {
         }
     }
 
-    pub fn method_callback(&mut self, callback: Option<unsafe extern "C" fn(i32)>) {
+    pub fn set_callback(&mut self, callback: Option<unsafe extern "C" fn(i32)>) {
         unsafe {
-            self.raw.method_callback(callback);
+            self.raw.set_callback(callback);
         }
     }
     pub fn call_function(&mut self, value: i32) {
@@ -69,10 +69,13 @@ mod tests {
         let val = 42;
         let mut test = Sample_MyClass::new();
 
-        test.method_callback(Some(rust_callback));
+
+        test.set_callback(Some(rust_callback));
+
         test.call_function(val);
         unsafe {
             assert_eq!(result, 42);
         }
     }
+
 }
