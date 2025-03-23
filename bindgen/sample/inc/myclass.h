@@ -7,5 +7,6 @@ public:
   ~MyClass();
   void method(void);
   bool method_bool(bool val);
+
 };
 #endif

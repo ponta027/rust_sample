@@ -30,6 +30,7 @@ impl Drop for Sample_MyClass {
         }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;

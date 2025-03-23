@@ -21,6 +21,7 @@ impl Sample_MyClass {
             self.raw.method();
         }
     }
+
     pub fn method_bool(&mut self, arg1: bool) -> bool {
         unsafe { self.raw.method_bool(arg1) }
     }
@@ -28,13 +29,11 @@ impl Sample_MyClass {
 impl Drop for Sample_MyClass {
     fn drop(&mut self) {
         println!("call Drop");
-
         unsafe {
             self.raw.destruct();
         }
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
