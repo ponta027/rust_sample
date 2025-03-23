@@ -69,10 +69,13 @@ mod tests {
         let val = 42;
         let mut test = Sample_MyClass::new();
 
+
         test.set_callback(Some(rust_callback));
+
         test.call_function(val);
         unsafe {
             assert_eq!(result, 42);
         }
     }
+
 }

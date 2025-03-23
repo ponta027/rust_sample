@@ -23,6 +23,7 @@ void CallBackClass::set_callback(void (*callback)(int))
   cbk = create_function(callback);
 }
 
+
 // `std::function` を作成し、そのポインタを返す
 function_handle_t CallBackClass::create_function(void (*callback)(int))
 {
